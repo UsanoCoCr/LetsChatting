@@ -1,0 +1,37 @@
+body {
+    background-image: url(https://th.bing.com/th/id/OIP.sMj5U7fD_0khu0ji0uU5mgHaEo?w=280&h=180&c=7&r=0&o=5&dpr=1.8&pid=1.7);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: aliceblue;
+}
+
+.background {
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0.7;
+    width: 80%;
+    height: 90%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.chatroom {
+    width: 80%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgba(31, 52, 123, 0.318);
+    opacity: 0.7;
+}

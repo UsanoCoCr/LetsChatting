@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/index.css" rel="stylesheet"/>
+    <title>LetsChatting</title>
+</head>
+
+<body>
+    <div class="background">
+        <h1>一起聊些什么吧！</h1>
+        <p>我们可以在这里说一些悄悄话！虽然不认识，但是大家彼此都是好朋友！</p>
+    </div>
+    <div class="chatroom">
+        
+    </div>
+</body>
+<!-- <script src="/socket.io/socket.io.js"></script> -->
+<script>
+    var socket = io();
+    socket.emit("newChatMessage", "这是传送给后端的消息");
+
+    socket.on("broadCastMessage", (msg) => {
+        console.log("这里输出后端返回的消息", msg);
+        renderContent(msg);
+    });
+</script>
+
+</html>
