@@ -1,3 +1,13 @@
+// 捕获未处理的异常
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+});
+
+// 捕获未处理的 Promise 拒绝
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 var express = require("express");
 var path = require('path');
 const readline = require('readline');
@@ -55,7 +65,8 @@ rl.on('line', (input) => {
     rl.prompt();
 });
 
-http.listen(3000, () => {
-    console.log("listening on *:3000");
-    console.log("http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+http.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`http://localhost:${PORT}`);
 });
