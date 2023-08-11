@@ -26,7 +26,7 @@
                 </select>
                 <button id="confirm-username">确认用户名</button>
             </label>
-            <p id="username-error" style="color: red;"></p> <!-- 错误消息显示位置 -->
+            <p id="username-error" style="color: red;"></p> 
         </div>
         <div class="show">
             <!-- 这里是聊天内容展示区域 -->
@@ -49,10 +49,14 @@
         const submitButton = document.getElementById("submit");
         const chatDisplayArea = document.querySelector(".show");
 
-        // 选择用户名
+        // 选择用户名，只有在点击“确认用户名”按钮后才会发送给服务器
         confirmUsernameButton.addEventListener("click", function () {
-            const selectedUsername = usernameElement.value;
-            socket.emit("selectUsername", selectedUsername);
+            const username = usernameElement.value;
+            if (username) {
+                socket.emit("usernameSelection", username);
+            } else {
+                usernameErrorElement.textContent = "请选择一个用户名！";
+            }
         });
 
         socket.on("usernameSelectionResult", function (data) {
