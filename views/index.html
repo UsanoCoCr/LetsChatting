@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="/css/index.css" rel="stylesheet"/>
+    <link href="/css/index.css" rel="stylesheet" />
     <title>LetsChatting</title>
 </head>
 
@@ -12,20 +12,106 @@
     <div class="background">
         <h1>一起聊些什么吧！</h1>
         <p>我们可以在这里说一些悄悄话！虽然不认识，但是大家彼此都是好朋友！</p>
+        <p class="sorry">由于技术原因，目前仅支持四人同时匿名聊天，请见谅QaQ！</p>
     </div>
     <div class="chatroom">
-        
+        <div class="user-selection">
+            <label for="username">请选择用户名:
+                <select id="username">
+                    <option value="" selected>选择用户名</option>
+                    <option value="Alice">Alice</option>
+                    <option value="Bob">Bob</option>
+                    <option value="Carol">Carol</option>
+                    <option value="Dave">Dave</option>
+                </select>
+                <button id="confirm-username">确认用户名</button>
+            </label>
+            <p id="username-error" style="color: red;"></p> <!-- 错误消息显示位置 -->
+        </div>
+        <div class="show">
+            <!-- 这里是聊天内容展示区域 -->
+        </div>
+        <div class="input-text">
+            <input type="text" id="input" placeholder="请输入你想说的话" required />
+            <input type="submit" id="submit" value="发送" />
+        </div>
     </div>
-</body>
-<!-- <script src="/socket.io/socket.io.js"></script> -->
-<script>
-    var socket = io();
-    socket.emit("newChatMessage", "这是传送给后端的消息");
 
-    socket.on("broadCastMessage", (msg) => {
-        console.log("这里输出后端返回的消息", msg);
-        renderContent(msg);
-    });
-</script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <script>
+        var socket = io();
+
+        const usernameElement = document.getElementById("username");
+        const confirmUsernameButton = document.getElementById("confirm-username");
+        const usernameErrorElement = document.getElementById("username-error");
+        const inputElement = document.getElementById("input");
+        const submitButton = document.getElementById("submit");
+        const chatDisplayArea = document.querySelector(".show");
+
+        // 选择用户名
+        confirmUsernameButton.addEventListener("click", function () {
+            const selectedUsername = usernameElement.value;
+            socket.emit("selectUsername", selectedUsername);
+        });
+
+        socket.on("usernameSelectionResult", function (data) {
+            if (data.success) {
+                // 如果用户名选择成功，隐藏选择部分并显示聊天室
+                document.querySelector(".user-selection").style.display = "none";
+            } else {
+                // 如果用户名选择失败，显示错误消息：聊天室已满
+                usernameErrorElement.textContent = data.message;
+            }
+        });
+
+        // 发送消息
+        submitButton.addEventListener("click", function () {
+            const message = inputElement.value.trim();
+            const username = usernameElement.value;
+            const timestamp = new Date().toLocaleTimeString();
+
+            if (!username) {
+                // 如果没有选择用户名，显示一个错误消息
+                alert("请先选择一个用户名！");
+                return;
+            }
+
+            if (message) {
+                const MessageInformation = `${username} ${timestamp}:`;
+                const formattedMessage = `${message}`;
+                const InformationElement = document.createElement("p");
+                const messageElement = document.createElement("p");
+                InformationElement.classList.add("message-information");
+                messageElement.classList.add("message");
+                InformationElement.textContent = MessageInformation;
+                messageElement.textContent = formattedMessage;
+                chatDisplayArea.appendChild(InformationElement);
+                chatDisplayArea.appendChild(messageElement);
+
+                inputElement.value = ""; // 清空输入框
+
+                //使聊天框自动滚动到最底部
+                chatDisplayArea.scrollTop = chatDisplayArea.scrollHeight;
+                socket.emit("message", {
+                    message,
+                    username,
+                    timestamp,
+                });
+            }
+        });
+
+        // 执行clear指令
+        socket.on("clearChat", function() {
+            chatDisplayArea.innerHTML = '';
+            const clearMessage = document.createElement("p");
+            const clearTime = new Date().toLocaleTimeString();
+            clearMessage.classList.add("server-message");
+            clearMessage.textContent = `${clearTime}-系统：聊天记录已清空`;
+            chatDisplayArea.appendChild(clearMessage);
+        });
+
+    </script>
+</body>
 
 </html>
